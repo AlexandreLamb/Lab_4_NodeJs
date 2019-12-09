@@ -1,0 +1,56 @@
+<head>
+    <% include partials/head %>
+</head>
+<button class="btn btn-danger" href="/logout" onClick='document.location.href="/logout"'>
+    Logout
+  </button>
+  <div id="form">
+  <p>Add Metrics</p>
+  <hr/>
+  <form action="/metrics" method="post">
+    <div class="form-group">
+        <label for="form_id">Id</label>
+        <input id="form_id" type="text" name="id" />
+      </div>
+    <div class="form-group">
+      <label for="form_value">Value</label>
+      <input id="form_value" type="text" name="value" />
+    </div>
+    <button class="btn btn-primary btn-block" type="submit" value="Submit">Add</button>
+  </form>
+  <hr/>
+</div>
+<button class="btn btn-success" id="show-metrics">
+    Bring all the metrics
+  </button>
+  <div id="metrics"></div>
+  <hr/>
+  <button class="btn btn-success" id="show-metrics-id">
+    Bring all the metrics by id
+  </button>
+  <label for="form_id_metrics">Id</label>
+    <input id="form_id_metrics" type="text" name="form_id_metrics" />
+  <div id="metrics-id"></div>
+</div>
+
+  <script>
+  $('#show-metrics').click((e) => {
+  e.preventDefault();
+  $.get("/metrics", {}, (data) => {
+    const content = data.map(d => {
+      return 'timestamp: '+d.timestamp+', value: '+d.value+'\n';
+    })
+    $('#metrics').append(content.join("\n"));
+  });
+})
+$('#show-metrics-id').click((e) => {
+    console.log($('#form_id_metrics').val())
+  e.preventDefault();
+  $.get("/metrics/"+$('#form_id_metrics').val(), {}, (data) => {
+    const content = data.map(d => {
+      return 'timestamp: '+d.timestamp+', value: '+d.value+'\n';
+    })
+    $('#metrics-id').append(content.join("\n"));
+  });
+})
+</script>
