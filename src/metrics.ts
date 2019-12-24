@@ -13,7 +13,7 @@ export class Metric {
 }
 
 export class MetricsHandler {
-  private db: any 
+  public db: any 
 
   constructor(dbPath: string) {
     this.db = LevelDB.open(dbPath)
@@ -28,11 +28,14 @@ export class MetricsHandler {
     stream.end()
   }
   public saveOne(key: string, metric: Metric, callback: (error: Error | null) => void) {
+    console.log("key : "+key)
     const stream = WriteStream(this.db)
     stream.on('error', callback)
     stream.on('close', callback)
     stream.write({ key: `metric:${key}:${metric.timestamp}`, value: metric.value })
-    stream.end()
+    stream.on('end',function(error){
+      callback(error)
+    })
   }
   
   public delete(key: string, callback: (error: Error | null, result : Boolean) => void) {
@@ -41,6 +44,7 @@ export class MetricsHandler {
     this.db.createReadStream()
   .on('data', function (data) {
     const name = data.key.split(':')[1];
+    console.log(name + " " + key)
    if ( name == key){
     db.del(data.key,function(err){
       if(err){
@@ -65,6 +69,7 @@ export class MetricsHandler {
 
   public getOne(key:string,callback: (error: Error | null, result :any) => void){
     let metrics: Metric[] = []
+    console.log(key)
     this.db.createReadStream()
   .on('data', function (data) {
     const name = data.key.split(':')[1]+":"+data.key.split(':')[2];

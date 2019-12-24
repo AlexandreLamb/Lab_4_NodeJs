@@ -124,15 +124,16 @@ authRouter.post('/signup',(req: any, res: any, next :any)=>{
 const userRouter = express.Router()
 
 userRouter.post('/', (req: any, res: any, next: any) => {
-  dbUser.get(req.body.username, function (err: Error | null, result?: User) {
-    if (!err || result !== undefined) {
-     res.status(409).send("user already exists")
-    } else {
-      dbUser.save(req.body, function (err: Error | null) {
+  dbUser.save(req.body, function (err: Error | null) {
         if (err) next(err)
         else res.status(201).send("user persisted")
       })
-    }
+})
+
+userRouter.delete('/:username', (req :any , res : any, next: any )=>{
+  dbUser.delete(req.body.username,function(err:Error | null){
+    if(err) res.status(201).send(err.message)
+    else res.status(201).send("result")
   })
 })
 

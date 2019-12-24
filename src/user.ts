@@ -75,12 +75,15 @@ export class UserHandler {
         let db = this.db;
         this.db.createReadStream().on("data", function(data) {
             const name = data.key.split(":")[1];
+            console.log(name == username)
             if (name == username) {
+                console.log("here")
                 db.del(data.key, (err: Error | null) => {
                     callback(err);
                 });
             }
-        });
+        })
+        callback(new Error("user not found"));
     }
 
     constructor(path: string) {
